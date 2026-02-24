@@ -1,16 +1,16 @@
 extends CharacterBody3D
 
 #Player Collision Nodes
-@onready var player_standing_col: CollisionShape3D = $PlayerStandingCol
-@onready var player_crouching_col: CollisionShape3D = $PlayerCrouchingCol
+@onready var player_standing_col: CollisionShape3D = $Player_Standing_Col
+@onready var player_crouching_col: CollisionShape3D = $Player_Crouching_Col
 
 #Player RayCast Nodes
 @onready var crouch_check: RayCast3D = $Crouch_Check
 
 #Player Camera Nodes
-@onready var head = $Head
-@onready var head_bob_controller: Node3D = $Head/HeadBobController
-@onready var camera = $Head/HeadBobController/PlayerCam
+@onready var head = $Camera_Handler/Head
+@onready var head_bob_controller: Node3D = $Camera_Handler
+@onready var camera = $Camera_Handler/Head/Camera3D
 
 #Mouse Sensitivity
 var sens = 0.002
@@ -31,15 +31,11 @@ var air_lerp_speed = 1.0
 var jump_velocity = 18.0
 
 #Player Camera Height
-const STANDING_HEIGHT = 1.7
-const CROUCHING_HEIGHT = 0.7
+const STANDING_HEIGHT = 1.6
+const CROUCHING_HEIGHT = 0.6
 
 #Player Direction
 var direction = Vector3.ZERO
-
-#Velocity Variables
-var prev_velocity_x = 0.0
-var prev_velocity_z = 0.0
 
 #Player State Variables
 var running = false
@@ -75,10 +71,6 @@ func _physics_process(delta: float) -> void:
 	else:
 		direction = lerp(direction, (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized(), delta * air_lerp_speed)
 	
-	#Setting the previous velocity to the current velocity.
-	prev_velocity_x = direction.x * air_control
-	prev_velocity_z = direction.z * air_control
-	
 	#Gravity logic.
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -87,7 +79,7 @@ func _physics_process(delta: float) -> void:
 		in_air = false
 	
 	#Mouse escape logic.
-	if Input.is_action_just_pressed("esc"):
+	if Input.is_action_just_pressed("escape"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	
 	#Jumping logic.
@@ -160,3 +152,4 @@ func _input(event: InputEvent) -> void:
 		rotate_y(-event.relative.x * sens)
 		camera.rotate_x(-event.relative.y * sens)
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-90), deg_to_rad(90))
+
