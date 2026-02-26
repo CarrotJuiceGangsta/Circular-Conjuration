@@ -64,15 +64,13 @@ var head_bobbing_current_intensity = 0.0
 
 
 func _ready() -> void:
+	#Capturing the mouse when the scene is loaded.
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
 
 
 func _physics_process(delta: float) -> void:
-	print(idle)
-
-
 	#Getting player input.
 	var input_dir := Input.get_vector("left", "right", "forward", "backward")
 
