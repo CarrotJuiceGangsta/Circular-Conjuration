@@ -13,7 +13,7 @@ extends CharacterBody3D
 @onready var camera = $Camera_Handler/Head/Camera_3D
 
 #Player State Display Nodes
-@onready var states_label: Label3D = $States_Label
+@onready var states_label: Label3D = $Camera_Handler/Head/Camera_3D/States_Label
 
 #Mouse Sensitivity
 var sens = 0.002
