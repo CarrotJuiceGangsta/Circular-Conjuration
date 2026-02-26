@@ -180,7 +180,7 @@ func _physics_process(delta: float) -> void:
 		
 		head_bob_controller.position.y = lerp(head_bob_controller.position.y, head_bobbing_vector.y * (head_bobbing_current_intensity/2.0), delta * lerp_speed)
 		head_bob_controller.position.x = lerp(head_bob_controller.position.x, head_bobbing_vector.x * head_bobbing_current_intensity, delta * lerp_speed)
-	
+		
 	elif !in_air and input_dir == Vector2.ZERO:
 		head_bobbing_vector.y = sin(head_bobbing_index)
 		
