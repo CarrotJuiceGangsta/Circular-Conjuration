@@ -62,8 +62,10 @@ var head_bobbing_vector = Vector2.ZERO
 var head_bobbing_index = 0.0
 var head_bobbing_current_intensity = 0.0
 
+
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
 
 
 
@@ -142,7 +144,7 @@ func _physics_process(delta: float) -> void:
 		running = false
 
 
-	#Headbob logic.
+	#Running logic.
 	if running:
 		states_label.text = "running"
 		speed = lerp(speed, run_speed, delta * lerp_speed)
@@ -150,12 +152,14 @@ func _physics_process(delta: float) -> void:
 		head_bobbing_index += HEAD_BOBBING_RUNNING_SPEED * delta
 
 
+	#Walking logic.
 	elif walking:
 		states_label.text = "walking"
 		head_bobbing_current_intensity = HEAD_BOBBING_WALKING_INTENSITY
 		head_bobbing_index += HEAD_BOBBING_WALKING_SPEED * delta
 
 
+	#Crouching logic.
 	elif crouching:
 		states_label.text = "crouching"
 		player_crouching_col.disabled = false
@@ -168,24 +172,22 @@ func _physics_process(delta: float) -> void:
 			states_label.text = "crouching and idle"
 
 
+	#Idle logic.
 	elif idle:
 		states_label.text = "idle"
 		head_bobbing_current_intensity = HEAD_BOBBING_IDLE_INTENSITY
 		head_bobbing_index += HEAD_BOBBING_IDLE_SPEED * delta
 
 
+	#Head bobbing logic.
 	if !in_air and input_dir != Vector2.ZERO:
 		head_bobbing_vector.y = sin(head_bobbing_index)
 		head_bobbing_vector.x = sin(head_bobbing_index/2)+0.5
-		
 		head_bob_controller.position.y = lerp(head_bob_controller.position.y, head_bobbing_vector.y * (head_bobbing_current_intensity/2.0), delta * lerp_speed)
 		head_bob_controller.position.x = lerp(head_bob_controller.position.x, head_bobbing_vector.x * head_bobbing_current_intensity, delta * lerp_speed)
-		
 	elif !in_air and input_dir == Vector2.ZERO:
 		head_bobbing_vector.y = sin(head_bobbing_index)
-		
 		head_bob_controller.position.y = lerp(head_bob_controller.position.y, head_bobbing_vector.y * (head_bobbing_current_intensity/2.0), delta * lerp_speed)
-	
 	else:
 		head_bob_controller.position.y = lerp(head_bob_controller.position.y, 0.0, delta * lerp_speed)
 		head_bob_controller.position.x = lerp(head_bob_controller.position.x, 0.0, delta * lerp_speed)
@@ -211,5 +213,3 @@ func _input(event: InputEvent) -> void:
 		rotate_y(-event.relative.x * sens)
 		camera.rotate_x(-event.relative.y * sens)
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-90), deg_to_rad(90))
-
-
