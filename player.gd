@@ -1,6 +1,6 @@
 extends CharacterBody3D
 #Player Hands
-@onready var hands_anim: AnimatedSprite3D = $Camera_Handler/Head/Camera_3D/Hands_Anim
+@onready var hands_anim: AnimatedSprite3D = $Camera_Handler/Head/Camera_3D/Hands_Handler/Hands_Anim
 
 #Player Collision Nodes
 @onready var player_standing_col: CollisionShape3D = $Player_Standing_Col
@@ -49,8 +49,6 @@ var crouching = false
 var idle = true
 var in_air = false
 
-var card_fanning = false
-var has_fanned = false
 
 #Headbob Values
 const HEAD_BOBBING_RUNNING_SPEED = 22.0
@@ -99,13 +97,6 @@ func _physics_process(delta: float) -> void:
 	#Mouse escape logic.
 	if Input.is_action_just_pressed("escape"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-
-
-	#Card Fanning logic.
-	if Input.is_action_pressed("card_fan"):
-		card_fanning = true
-	else:
-		card_fanning = false
 
 
 	#Jumping logic.
@@ -189,16 +180,6 @@ func _physics_process(delta: float) -> void:
 		head_bobbing_current_intensity = HEAD_BOBBING_IDLE_INTENSITY
 		head_bobbing_index += HEAD_BOBBING_IDLE_SPEED * delta
 
-
-	#Card fanning logic.
-	if card_fanning and !has_fanned:
-		hands_anim.play("fanning_cards")
-		has_fanned = true
-	if !card_fanning and has_fanned:
-		hands_anim.play_backwards("fanning_cards")
-		has_fanned = false
-		
-		
 
 	#Head bobbing logic.
 	if !in_air and input_dir != Vector2.ZERO:
