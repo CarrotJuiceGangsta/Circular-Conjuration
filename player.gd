@@ -1,4 +1,6 @@
 extends CharacterBody3D
+#Player Hands
+@onready var hands_anim: AnimatedSprite3D = $Camera_Handler/Head/Camera_3D/Hands_Anim
 
 #Player Collision Nodes
 @onready var player_standing_col: CollisionShape3D = $Player_Standing_Col
@@ -46,6 +48,9 @@ var walking = false
 var crouching = false
 var idle = true
 var in_air = false
+
+var card_fanning = false
+var has_fanned = false
 
 #Headbob Values
 const HEAD_BOBBING_RUNNING_SPEED = 22.0
@@ -96,12 +101,19 @@ func _physics_process(delta: float) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
+	#Card Fanning logic.
+	if Input.is_action_pressed("card_fan"):
+		card_fanning = true
+	else:
+		card_fanning = false
+
+
 	#Jumping logic.
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = jump_velocity
 
 
-	#Idle logic.
+	#Idle state logic.
 	if !input_dir and !in_air:
 		running = false
 		walking = false
@@ -109,7 +121,8 @@ func _physics_process(delta: float) -> void:
 	else:
 		idle = false
 
-	#Walking logic.
+
+	#Walking state logic.
 	if input_dir and !in_air and !running and !crouching:
 		running = false
 		walking = true
@@ -177,18 +190,39 @@ func _physics_process(delta: float) -> void:
 		head_bobbing_index += HEAD_BOBBING_IDLE_SPEED * delta
 
 
+	#Card fanning logic.
+	if card_fanning and !has_fanned:
+		hands_anim.play("fanning_cards")
+		has_fanned = true
+	if !card_fanning and has_fanned:
+		hands_anim.play_backwards("fanning_cards")
+		has_fanned = false
+		
+		
+
 	#Head bobbing logic.
 	if !in_air and input_dir != Vector2.ZERO:
 		head_bobbing_vector.y = sin(head_bobbing_index)
 		head_bobbing_vector.x = sin(head_bobbing_index/2)+0.5
 		head_bob_controller.position.y = lerp(head_bob_controller.position.y, head_bobbing_vector.y * (head_bobbing_current_intensity/2.0), delta * lerp_speed)
 		head_bob_controller.position.x = lerp(head_bob_controller.position.x, head_bobbing_vector.x * head_bobbing_current_intensity, delta * lerp_speed)
+		hands_anim.position.y = lerp(hands_anim.position.y - 0.003, head_bobbing_vector.y * (head_bobbing_current_intensity/10), delta * lerp_speed)
+		hands_anim.position.x = lerp(hands_anim.position.x, head_bobbing_vector.x * (head_bobbing_current_intensity/30), delta * lerp_speed)
+
 	elif !in_air and input_dir == Vector2.ZERO:
 		head_bobbing_vector.y = sin(head_bobbing_index)
 		head_bob_controller.position.y = lerp(head_bob_controller.position.y, head_bobbing_vector.y * (head_bobbing_current_intensity/2.0), delta * lerp_speed)
+		hands_anim.position.y = lerp(hands_anim.position.y - 0.003, head_bobbing_vector.y * (head_bobbing_current_intensity/10), delta * lerp_speed)
+		hands_anim.position.x = lerp(hands_anim.position.x, 0.0, delta * lerp_speed)
+
+
 	else:
 		head_bob_controller.position.y = lerp(head_bob_controller.position.y, 0.0, delta * lerp_speed)
 		head_bob_controller.position.x = lerp(head_bob_controller.position.x, 0.0, delta * lerp_speed)
+		hands_anim.position.y = lerp(hands_anim.position.y, -0.003, delta * lerp_speed)
+		hands_anim.position.x = lerp(hands_anim.position.x, 0.0, delta * lerp_speed)
+
+
 
 
 	#Velocity logic.
