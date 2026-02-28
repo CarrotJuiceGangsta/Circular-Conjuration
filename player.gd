@@ -1,5 +1,6 @@
 extends CharacterBody3D
-#Player Hands
+
+#Player Hands Nodes
 @onready var hands_anim: AnimatedSprite3D = $Camera_Handler/Head/Camera_3D/Hands_Handler/Hands_Anim
 
 #Player Collision Nodes
@@ -202,8 +203,6 @@ func _physics_process(delta: float) -> void:
 		head_bob_controller.position.x = lerp(head_bob_controller.position.x, 0.0, delta * lerp_speed)
 		hands_anim.position.y = lerp(hands_anim.position.y, -0.003, delta * lerp_speed)
 		hands_anim.position.x = lerp(hands_anim.position.x, 0.0, delta * lerp_speed)
-
-
 
 
 	#Velocity logic.
